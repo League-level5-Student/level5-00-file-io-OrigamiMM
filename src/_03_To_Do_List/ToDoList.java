@@ -2,14 +2,20 @@ package _03_To_Do_List;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 public class ToDoList implements ActionListener {
 	/*
@@ -38,9 +44,16 @@ public class ToDoList implements ActionListener {
 	JPanel panel;
 	JButton[] buttons;
 	String currentTasksDisplay = "";
+	String loadedFile = "";
 
 	public static void main(String[] args) {
 		ToDoList list = new ToDoList();
+		try {
+			list.loadFile("src/_03_To_Do_List/test2.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		list.GUI();
 	}
 
@@ -55,6 +68,7 @@ public class ToDoList implements ActionListener {
 			panel.add(buttons[i]);
 			buttons[i].addActionListener(this);
 		}
+
 		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
@@ -87,15 +101,44 @@ public class ToDoList implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Task " + index + " has been removed");
 		} else if (buttons[3] == e.getSource()) {
 			try {
-				FileWriter fr = new FileWriter("src/_03_ToDoList/test2.txt");
-			//	fr.write(tasks.get(i));
+				FileWriter fr = new FileWriter("src/_03_To_Do_List/test2.txt");
+				for (int j = 0; j < tasks.size(); j++) {
+					fr.write(tasks.get(j) + "\n");
+				}
+				fr.close();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} else if (buttons[4] == e.getSource()) {
+			JFileChooser jfc = new JFileChooser();
+			int returnVal = jfc.showOpenDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				loadedFile = jfc.getSelectedFile().getAbsolutePath();
+				try {
+					loadFile(loadedFile);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 
 		}
-
 	}
+
+	void loadFile(String fileName) throws IOException {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			String line = br.readLine();
+			while (line != null) {
+				tasks.add(line);
+				line = br.readLine();
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }

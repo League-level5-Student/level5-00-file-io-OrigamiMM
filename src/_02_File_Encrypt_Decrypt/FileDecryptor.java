@@ -40,7 +40,6 @@ public class FileDecryptor {
 		String message = "";
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
-
 			String line = br.readLine();
 			while (line != null) {
 				message += line;
